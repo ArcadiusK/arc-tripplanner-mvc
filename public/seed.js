@@ -1,14 +1,6 @@
-// This file should contain all the record creation needed to seed the database with its default values.
-// The data can then be loaded with the node seed.js 
 
-var async = require('async');
-var mongoose = require('mongoose');
-var models = require('./models');
-var Place = models.Place,
-    Hotel = models.Hotel,
-    Restaurant = models.Restaurant,
-    ThingToDo = models.ThingToDo,
-    Day = models.Day;
+var Place = function () {
+};
 
 var data = {
 	Hotel: [
@@ -63,35 +55,3 @@ var data = {
 		{name: "Strand Bookstore", place: [new Place({address: "828 Broadway", city: "New York", state: "NY", phone: "123-456-7890", location: [40.733274, -73.990870]})], age_range: "All" }
 	]
 };
-
-mongoose.connection.on('open', function() {
-	mongoose.connection.db.dropDatabase(function() {
-
-		console.log("Dropped old data, now inserting data");
-		async.each(Object.keys(data),
-			function(modelName, outerDone) {
-				async.each(data[modelName],
-					function(d, innerDone) {
-						models[modelName].create(d, innerDone);
-					},
-					outerDone
-				);
-			},
-			function(err) {
-				models.Hotel.findOne(function(err, hotel) {
-					models.Day.create({
-						day_number: 10,
-						hotel: hotel
-					}, function() {
-						console.log("Finished inserting data");
-						console.log("Control-C to quit");
-					});
-				});
-			}
-		);
-	});
-});
-
-module.exports = {
-	data: data
-	};
